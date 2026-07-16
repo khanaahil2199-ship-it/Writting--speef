@@ -1,0 +1,291 @@
+Here is a complete, fully functional, and beautifully designed single-file website. It uses Tailwind CSS for a modern, sleek look, and features a glowing dark-mode aesthetic, smooth page transitions, and interactive features.
+I added a live speed tracker (WPM), word counter, and timer to the writing section so users can actually track and improve their writing speed in real-time!
+How to use this:
+ * Copy the code below.
+ * Paste it into a text file and save it as index.html.
+ * Double-click the file to open it in any web browser!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scribble & Speed</title>
+    <!-- Tailwind CSS for sleek styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts for a gorgeous modern typeface -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0b0b0f;
+        }
+        .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        /* Cool animated background glow */
+        .glow-orb {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(168,85,247,0.05) 50%, rgba(0,0,0,0) 70%);
+            filter: blur(40px);
+            z-index: 0;
+            pointer-events: none;
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 50px) scale(1.1); }
+        }
+        /* Custom scrollbar for the writing pad */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4B5563;
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col justify-between overflow-x-hidden relative">
+
+    <!-- Decorative Glow Effects for the "Cool Design" -->
+    <div class="glow-orb top-10 left-10"></div>
+    <div class="glow-orb bottom-10 right-10" style="animation-delay: -5s; background: radial-gradient(circle, rgba(236,72,153,0.1) 0%, rgba(99,102,241,0.05) 60%, rgba(0,0,0,0) 80%);"></div>
+
+    <!-- ========================================== -->
+    <!--            1. FRONT LANDING PAGE           -->
+    <!-- ========================================== -->
+    <div id="landing-page" class="z-10 flex-grow flex flex-col justify-center items-center px-6">
+        <div class="text-center max-w-2xl mb-12">
+            <!-- Cool glowing badge -->
+            <span class="px-4 py-1.5 rounded-full text-xs font-semibold tracking-wider bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 uppercase font-display">
+                Level Up Your Mind
+            </span>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight mt-6 mb-4 font-display bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+                Scribble & Speed
+            </h1>
+            <p class="text-slate-400 text-lg md:text-xl">
+                Choose your canvas. Train your fingers to keep pace with your thoughts, or sketch your imagination.
+            </p>
+        </div>
+
+        <!-- The Two Main Options -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+            <!-- Option 1: For Writing -->
+            <button onclick="navigateTo('writing-page')" class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-indigo-500/50 transition-all duration-300 text-left overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative z-10">
+                    <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-6 border border-indigo-500/20 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-feather-pointed text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 font-display">For Writing</h3>
+                    <p class="text-slate-400 text-sm">Boost your typing speed, capture fluid thoughts, and organize your daily logs in real-time.</p>
+                </div>
+            </button>
+
+            <!-- Option 2: For Drawing -->
+            <button onclick="navigateTo('drawing-page')" class="group relative p-8 rounded-2xl bg-white/5 border border-white/10 hover:border-pink-500/50 transition-all duration-300 text-left overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-br from-pink-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div class="relative z-10">
+                    <div class="w-12 h-12 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center mb-6 border border-pink-500/20 group-hover:scale-110 transition-transform duration-300">
+                        <i class="fa-solid fa-palette text-xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2 font-display">For Drawing</h3>
+                    <p class="text-slate-400 text-sm">Visualize your ideas, doodle concepts, and sketch with intuitive interactive brush tools.</p>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!--            2. WRITING PRACTICE VIEW        -->
+    <!-- ========================================== -->
+    <div id="writing-page" class="hidden z-10 flex-grow flex-col h-screen p-4 md:p-8">
+        <!-- Top Nav Bar inside Writer -->
+        <div class="flex justify-between items-center mb-6">
+            <button onclick="navigateTo('landing-page')" class="px-4 py-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-sm flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Home
+            </button>
+            
+            <div class="flex items-center gap-4 relative">
+                <!-- Live WPM & Counter HUD -->
+                <div class="flex gap-4 text-xs font-display text-slate-400 bg-white/5 px-4 py-2 rounded-lg border border-white/10">
+                    <div>WORDS: <span id="word-count" class="text-indigo-400 font-bold">0</span></div>
+                    <div class="border-l border-white/10 pl-4">SPEED: <span id="wpm-display" class="text-emerald-400 font-bold">0 WPM</span></div>
+                </div>
+
+                <!-- Settings Button (3 dots) -->
+                <button onclick="toggleSettings()" class="w-10 h-10 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 flex items-center justify-center transition-all">
+                    <i class="fa-solid fa-ellipsis-vertical text-lg"></i>
+                </button>
+
+                <!-- Settings Dropdown Menu -->
+                <div id="settings-menu" class="hidden absolute right-0 top-12 w-48 rounded-xl bg-[#141419] border border-white/10 shadow-2xl p-2 z-50">
+                    <div class="text-[10px] uppercase tracking-wider text-slate-500 px-3 py-1 font-bold">Canvas Themes</div>
+                    <button onclick="setTheme('dark')" class="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-white/5 flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-slate-900 border border-white/20"></span> Default Dark
+                    </button>
+                    <button onclick="setTheme('light')" class="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-white/5 flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-slate-100 border border-black/20"></span> Polar Light
+                    </button>
+                    <button onclick="setTheme('sepia')" class="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-white/5 flex items-center gap-2">
+                        <span class="w-3.5 h-3.5 rounded-full bg-[#f4ecd8] border border-black/10"></span> Retro Sepia
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- The Writing Pad Area -->
+        <div id="writing-pad" class="flex-grow flex flex-col max-w-4xl w-full mx-auto rounded-2xl bg-white/5 border border-white/10 p-6 md:p-10 transition-all duration-300">
+            <!-- Title Input (Note that the placeholder vanishes seamlessly once typing starts) -->
+            <input type="text" placeholder="Title" id="writing-title" class="bg-transparent text-3xl md:text-4xl font-extrabold font-display border-none outline-none focus:ring-0 placeholder-slate-600 mb-6 w-full text-white transition-colors duration-300" />
+            
+            <!-- Standard dynamic text input area -->
+            <textarea id="writing-textarea" placeholder="Start typing here to test and improve your speed..." class="bg-transparent flex-grow w-full resize-none border-none outline-none focus:ring-0 text-slate-300 text-lg leading-relaxed placeholder-slate-600 transition-colors duration-300"></textarea>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!--            3. DRAWING PRACTICE VIEW (WIP)  -->
+    <!-- ========================================== -->
+    <div id="drawing-page" class="hidden z-10 flex-grow flex flex-col justify-center items-center px-6">
+        <div class="text-center max-w-md p-8 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-24 h-24 bg-pink-500/20 rounded-full blur-xl"></div>
+            
+            <div class="text-6xl mb-6 transform hover:rotate-12 transition-transform duration-300 inline-block">😜</div>
+            <h2 class="text-3xl font-extrabold font-display mb-3">Not Available Yet!</h2>
+            <p class="text-slate-400 mb-6">
+                We're currently mixing the digital paints! This creative studio section will be unlocked soon.
+            </p>
+            <button onclick="navigateTo('landing-page')" class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 text-white font-semibold transition-all shadow-lg shadow-indigo-500/20">
+                Take Me Back
+            </button>
+        </div>
+    </div>
+
+    <!-- Minimal Footer -->
+    <footer class="py-6 text-center text-xs text-slate-600 z-10">
+        Designed to accelerate both thought and speed. &copy; 2026
+    </footer>
+
+    <!-- ========================================== -->
+    <!--            4. INTERACTIVE JAVASCRIPT       -->
+    <!-- ========================================== -->
+    <script>
+        // --- Navigation Logic ---
+        function navigateTo(pageId) {
+            // Hide all pages
+            document.getElementById('landing-page').classList.add('hidden');
+            document.getElementById('landing-page').classList.remove('flex');
+            document.getElementById('writing-page').classList.add('hidden');
+            document.getElementById('writing-page').classList.remove('flex');
+            document.getElementById('drawing-page').classList.add('hidden');
+            document.getElementById('drawing-page').classList.remove('flex');
+
+            // Show target page
+            const activePage = document.getElementById(pageId);
+            activePage.classList.remove('hidden');
+            if (pageId === 'writing-page' || pageId === 'landing-page' || pageId === 'drawing-page') {
+                activePage.classList.add('flex');
+            }
+
+            // Close settings dropdown on navigate
+            document.getElementById('settings-menu').classList.add('hidden');
+        }
+
+        // --- Settings Dropdown ---
+        function toggleSettings() {
+            const menu = document.getElementById('settings-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close settings when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.fa-ellipsis-vertical') && !event.target.closest('#settings-menu')) {
+                document.getElementById('settings-menu').classList.add('hidden');
+            }
+        }
+
+        // --- Writing Canvas Theme Swapper ---
+        function setTheme(theme) {
+            const pad = document.getElementById('writing-pad');
+            const titleInput = document.getElementById('writing-title');
+            const textarea = document.getElementById('writing-textarea');
+
+            // Reset classes
+            pad.className = "flex-grow flex flex-col max-w-4xl w-full mx-auto rounded-2xl p-6 md:p-10 transition-all duration-300 ";
+            titleInput.className = "bg-transparent text-3xl md:text-4xl font-extrabold font-display border-none outline-none focus:ring-0 mb-6 w-full transition-colors duration-300 ";
+            textarea.className = "bg-transparent flex-grow w-full resize-none border-none outline-none focus:ring-0 text-lg leading-relaxed transition-colors duration-300 ";
+
+            if (theme === 'dark') {
+                pad.classList.add('bg-white/5', 'border', 'border-white/10');
+                titleInput.classList.add('text-white', 'placeholder-slate-600');
+                textarea.classList.add('text-slate-300', 'placeholder-slate-600');
+            } else if (theme === 'light') {
+                pad.classList.add('bg-slate-100', 'border', 'border-slate-300', 'shadow-xl');
+                titleInput.classList.add('text-slate-900', 'placeholder-slate-400');
+                textarea.classList.add('text-slate-700', 'placeholder-slate-400');
+            } else if (theme === 'sepia') {
+                pad.classList.add('bg-[#f4ecd8]', 'border', 'border-[#e4dcc4]', 'shadow-xl');
+                titleInput.classList.add('text-[#433422]', 'placeholder-[#c4bca4]');
+                textarea.classList.add('text-[#5c4a37]', 'placeholder-[#c4bca4]');
+            }
+            
+            document.getElementById('settings-menu').classList.add('hidden');
+        }
+
+        // --- Live WPM and Word Counter Script ---
+        const writingArea = document.getElementById('writing-textarea');
+        const wordCountDisplay = document.getElementById('word-count');
+        const wpmDisplay = document.getElementById('wpm-display');
+        
+        let startTime = null;
+        let timerInterval = null;
+
+        writingArea.addEventListener('input', () => {
+            const text = writingArea.value.trim();
+            
+            // 1. Calculate word count
+            const words = text === '' ? 0 : text.split(/\s+/).length;
+            wordCountDisplay.textContent = words;
+
+            // 2. Start speed tracker upon first stroke
+            if (words > 0 && !startTime) {
+                startTime = new Date();
+                timerInterval = setInterval(updateWPM, 1000);
+            } else if (words === 0) {
+                // Reset if cleared
+                startTime = null;
+                clearInterval(timerInterval);
+                wpmDisplay.textContent = '0 WPM';
+            }
+        });
+
+        function updateWPM() {
+            const text = writingArea.value.trim();
+            const words = text === '' ? 0 : text.split(/\s+/).length;
+            
+            if (startTime && words > 0) {
+                const now = new Date();
+                const timeDiffInMinutes = (now - startTime) / 60000; // time in fractional minutes
+                if (timeDiffInMinutes > 0) {
+                    const wpm = Math.round(words / timeDiffInMinutes);
+                    wpmDisplay.textContent = `${wpm} WPM`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
